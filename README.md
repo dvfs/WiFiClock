@@ -2,7 +2,7 @@
 A WiFi clock who also displays temperature &amp; weather if it turns bad !
 
 
-Some tutorial and code example I use in this project :
+Some tutorials and code examples I used in this project :
 
 https://randomnerdtutorials.com/esp8266-weather-forecaster/
 
