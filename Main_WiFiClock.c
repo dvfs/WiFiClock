@@ -528,12 +528,12 @@ void HowBrightIsIt(){
   	return;
   }
   else{
-  	dimValue = ((float)lux) / 500; // pour remettre en %, avec coefficient de 2
-  	threshold = 12; 	// pour faire un hysteresis
+  	dimValue = ((float)lux) / 500; // convert into %
+  	threshold = 12; 	// to make an hysteresis
   }
 
   if( dimValue  > 1){
-  	dimValue = 1;			// car dim est compris entre 0 et 1
+  	dimValue = 1;	// because dim should be between 0 and 1.
   }
 
   temp = temp + int(dimValue * 16) - 1;
