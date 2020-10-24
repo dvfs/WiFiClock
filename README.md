@@ -19,6 +19,26 @@ Schematic :
   <img src="https://romaindurocher.com/MISC/Main_WiFiClock.jpg" alt="schematic">
 </p>
 
+<h2>InterruptVoid()</h2>
+
+When proximity sensor is trigged, it flag an interrupt, who increment a int called <i>interruptHandler</i>, who makes the code enter in <i>interruptVoid()</i> when main loop reach it (and int !=0).
+
+It will loop inside this fonction until a 5s timer is ended or the sensor is trigged more than five times.
+Exiting the <i>interruptVoid()</i> set <i>interruptHandler</i> to 0.
+
+Triggering the sensor will also resetting the timer to 0.
+
+This function display an information in a list of 5 differents, depending the number of times the proximity sensor was triggered. If you hit once, it will display the date during 5s, or if you hit once more, it will display the temperature for 5s ...
+
+
+<p align="center">
+  <img src="https://romaindurocher.com/MISC/interruptVoid().jpg" alt="interruptVoid">
+</p>
+
+
+
+<hr>
+
 <i>Details in progress !</i>
 
 Some tutorials and code examples I used in this project :
