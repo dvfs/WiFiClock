@@ -13,7 +13,7 @@ Schematic :
 
 <hr>
 
-<h2>Code syniptic</h2>
+<h2>Code synoptic</h2>
 
 <p align="center">
   <img src="https://romaindurocher.com/MISC/Main_WiFiClock.jpg" alt="schematic">
