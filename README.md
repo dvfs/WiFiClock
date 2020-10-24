@@ -3,7 +3,7 @@ A WiFi clock who also displays temperature &amp; weather if it turns bad !
 
 Full project details can be found here : https://hackaday.io/project/175515-wifi-clock
 
-This page only show details about code.
+This page only shows details about code.
 
 Schematic :
 
@@ -23,12 +23,12 @@ Schematic :
 
 When proximity sensor is trigged, it flag an interrupt, who increment a int called <i>interruptHandler</i>, who makes the code enter in <i>interruptVoid()</i> when main loop reach it (and int !=0).
 
-It will loop inside this fonction until a 5s timer is ended or the sensor is trigged more than five times.
+It will loop inside this function until a 5s timer is ended or the sensor is trigged more than five times.
 Exiting the <i>interruptVoid()</i> set <i>interruptHandler</i> to 0.
 
 Triggering the sensor will also resetting the timer to 0.
 
-This function display an information in a list of 5 differents, depending the number of times the proximity sensor was triggered. If you hit once, it will display the date during 5s, or if you hit once more, it will display the temperature for 5s ...
+This function displays an information in a list of 5 different, depending the number of times the proximity sensor was triggered. If you hit once, it will display the date during 5s, or if you hit once more, it will display the temperature for 5s ...
 
 
 <p align="center">
