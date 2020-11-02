@@ -39,6 +39,13 @@ This function displays an information in a list of 5 different, depending the nu
 
 <hr>
 
+Update to 2.0
+
+Adding whoops function to display NC when wifi  network is unavailable (still exist, but maybe broken)
+Modifying OpenWeather API call to OneCall, to get better weather forecast
+
+<hr>
+
 <i>Details in progress !</i>
 
 Some tutorials and code examples I used in this project :
