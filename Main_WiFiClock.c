@@ -72,7 +72,8 @@ int anim1[] = {0x0001,0x0020,0x0010,0x0008};
 int anim2[] = {0x0008,0x0004,0x0002};
 
 String openWeatherMapApiKey = "xxxx";  // Type here your API key
-String jsonBuffer;
+String _lat = "xxx"; // get lat & long values from https://www.latlong.net/
+String _long = "xxx";
 
 unsigned long lastConnectionTime = 0;     // last time you connected to the server, in milliseconds
 const unsigned long intervalTime = 5 * 1000;    
@@ -139,8 +140,13 @@ void setup() {
 
   WiFi.begin(ssid, password);
 
+  unsigned long start = millis();
   while (WiFi.status() != WL_CONNECTED) {
-    animation1();
+    	animation1();
+      	if (millis() > start + 15000) {	// if no connexion after 15s			      
+		whoops();
+	}
+	  
   }
 
   alpha4.clear();
@@ -162,7 +168,11 @@ void loop() {
 
   if (millis() - lastConnectionTemperature > intervalTemperature){
   	lastConnectionTemperature = millis();    
-    Temperature = getTemperature();
+    	Temperature = getTemperature();
+	  
+	if(WiFi.status() != WL_CONNECTED){ // check every 5s (intervalTemperature) if wifi is still connected
+    		whoops();
+	}
   }
 
   if (millis() - lastConnectionWeather > intervalWeather){
@@ -314,24 +324,25 @@ String getTemperature(){
 
 	int tempTEMP;
 	String tempExport= "";
+  	String jsonBuffer; // not stable when global, not sure to understand why ..
 
-	String serverPath = "http://api.openweathermap.org/data/2.5/weather?lat=45.51&lon=-73.59&appid=" + openWeatherMapApiKey + "&units=metric";
+	String serverPath = "http://api.openweathermap.org/data/2.5/onecall?lat=" + _lat + "&lon=" + _long + "&exclude=minutely,hourly,daily,alert&appid=" + _apiKey + "&units=metric";
 	
 	jsonBuffer = httpGETRequest(serverPath.c_str());
 	JSONVar myObject = JSON.parse(jsonBuffer);
 
 	// JSON.typeof(jsonVar) can be used to get the type of the var
 	if (JSON.typeof(myObject) == "undefined") {
-	  Serial.println("ERROR");
+	  	Serial.println("ERROR");
 		//Serial.println(ret);
-        delay(10000);
-	  return "azerty";
+        	delay(1000);
+	  	return "azerty";
 	}
 
-	tempTEMP = round(myObject["main"]["temp"]);
+  	tempTEMP = round(myObject["current"]["temp"]);
 
 	if(tempTEMP <= -10 ){
-    tempExport = String(tempTEMP);
+    		tempExport = String(tempTEMP);
 	}
 	else if( tempTEMP > -10 && tempTEMP < 0 ){
 		tempExport += " ";	// fill variable if not enough digit
@@ -353,30 +364,37 @@ String getTemperature(){
 //####################################################################################################################################
 String getWeather(){
 	String tempWEATHER;
+  	String jsonBuffer; // not stable when global, not sure to understand why ..
+  	int temp = 0;
 	
-	String serverPath = "http://api.openweathermap.org/data/2.5/forecast?lat=45.51&lon=-73.59&appid=" + openWeatherMapApiKey + "&units=metric&cnt=1";
- 
+	String serverPath = "http://api.openweathermap.org/data/2.5/onecall?lat=" + _lat + "&lon=" + _long + "&exclude=current,minutely,daily,alert&appid=" + _apiKey + "&units=metric";
+  
  	jsonBuffer = httpGETRequest(serverPath.c_str());
+	// because the answer is wayyy to long on a terminal, I just want the current/next hour forecast
+  	temp = jsonBuffer.indexOf("}]");
+  	jsonBuffer = jsonBuffer.substring(0,temp+2);  
+  	jsonBuffer = jsonBuffer + "}]}";
+	
 	JSONVar myObject = JSON.parse(jsonBuffer);
 
 	// JSON.typeof(jsonVar) can be used to get the type of the var
 	if (JSON.typeof(myObject) == "undefined") {
-	  Serial.println("ERROR");
-        delay(10000);
-	  return "azerty";
+	  	//Serial.println("ERROR");
+        	delay(1000);
+	  	return "azerty";
 	}
 
-	tempWEATHER = myObject["list"][0]["weather"][0]["icon"];
+  	tempWEATHER = myObject["hourly"][0]["weather"][0]["icon"];
 	// see OpenWeather documentation for code details
-  if ((tempWEATHER == "09d") || (tempWEATHER == "09n") || (tempWEATHER == "10d") || (tempWEATHER == "10n") || (tempWEATHER == "11d") || (tempWEATHER == "11n")){
-  	tempWEATHER = "RAIN";
-  }
-  else if((tempWEATHER == "13d") || (tempWEATHER == "13n")){
-  	tempWEATHER = "SNOW";
-  }
-  else if((tempWEATHER == "50d") || (tempWEATHER == "50n")){
-  	tempWEATHER = "MIST";
-  }
+  	if ((tempWEATHER == "09d") || (tempWEATHER == "09n") || (tempWEATHER == "10d") || (tempWEATHER == "10n") || (tempWEATHER == "11d") || (tempWEATHER == "11n")){
+  		tempWEATHER = "RAIN";
+  	}
+  	else if((tempWEATHER == "13d") || (tempWEATHER == "13n")){
+  		tempWEATHER = "SNOW";
+  	}
+  	else if((tempWEATHER == "50d") || (tempWEATHER == "50n")){
+  		tempWEATHER = "MIST";
+  	}
 	else{
 		tempWEATHER ="";
 	}
@@ -640,4 +658,19 @@ void interruptVoid(){
         break;
     }
 	}
+}
+
+//####################################################################################################################################
+void whoops(){
+
+  alpha4.clear();
+  alpha4.writeDisplay();
+
+  while(1){
+          
+    alpha4.writeDigitAscii(1, 'N');
+    alpha4.writeDigitAscii(2, 'C');
+    alpha4.writeDisplay();  
+
+  }
 }
